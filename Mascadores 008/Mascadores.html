@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8"> 
+    <title>Mascadores por Andrew Kane </title>
+    <style></style>
+	   <link rel="shortcut icon" href="favicon.ico" >
+   <link rel="icon" type="image/gif" href="animated_favicon1.gif" >
+</head>
+<body class="myElement" oncontextmenu="return false;">
+<canvas id="gameCanvas" width="1000" height="800"></canvas>
+<script type="text/javascript" src="graphics.js"></script>
+<script type="text/javascript" src="texthandling.js"></script>
+<script type="text/javascript" src="mouse.js"></script>
+<script type="text/javascript" src="keyboard.js"></script>
+<script type="text/javascript" src="virtualkey.js"></script>
+<script type="text/javascript" src="player.js"></script>
+<script type="text/javascript" src="meq.js"></script>
+<script type="text/javascript" src="monster.js"></script>
+<script type="text/javascript" src="mgrid.js"></script>
+<script type="text/javascript" src="msounds.js"></script>
+<script>
+
+// declare global variables/////////////////////////////////////////////////
+var mytime = Date.now();
+var FPS = 60;
+setInterval(update, 1000 / FPS);// set up interval (game loop)
+var canvas, context;
+canvas = document.getElementById("gameCanvas"); //canvas is the draw sauce.
+canvas.style.cursor = "crosshair";
+context = canvas.getContext("2d");
+context.canvas.width  = window.innerWidth-24; //This overrides the 1600x900 established in html.
+context.canvas.height = window.innerHeight-24;
+function openFullscreen() {
+  if (canvas.requestFullscreen) {
+    canvas.requestFullscreen();
+  } else if (elem.webkitRequestFullscreen) { /* Safari */
+    canvas.webkitRequestFullscreen();
+  } else if (elem.msRequestFullscreen) { /* IE11 */
+    canvas.msRequestFullscreen();
+  }
+}
+
+var windowmousexoffset = -8;
+var windowmouseyoffset = -8;
+var fullscreenmousexoffset = -12;
+var fullscreenmouseyoffset = -68;
+var mousestate = 0;
+var mode = 0; //0 for appearance, 1 ship properties, 2 blaster properties, 3 behavior properties
+var mx = 0;
+var my = 0;
+var mode = 0;//0 is arcade, 1 is map
+var level = 0;
+var arcadegrids = []
+
+
+//var vkeys = allvkeys(canvas.width,canvas.height);
+var time = 0; //Count of frames elapsed in game time.  Used to track in-game time related stuff.
+var testgrid = new Mgrid("Test Game Grid",7,7);
+var player1 = new Player("P1");
+var monster1 = new Monster("M1");
+monster1.x = 3;
+monster1.y = 3;
+testgrid.players = [player1];
+testgrid.monsters = [monster1]
+testgrid.hf = Math.floor(Math.random()*5)+2
+testgrid.generateadditiongrid(0,4,0,4);
+arcadegrids.push(testgrid);
+var i=0;
+while (i<100){
+	var hungryfor = Math.floor(Math.random()*(4+i))+2
+	var newgrid = new Mgrid("Arcade Level "+i,7,7);
+	var newmonster1 = new Monster("M1");
+	newmonster1.x = 3;
+	newmonster1.y = 3;
+	newgrid.monsters = [newmonster1];
+	newgrid.hf = Math.floor(Math.random()*(4+i))+2
+	newgrid.generateadditiongrid(0,4+i/2,0,4+i/2);
+	arcadegrids.push(newgrid);
+	i++;
+	}
+///GAMELOOP/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////update function this is the game loop bruh////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function update() {
+	var truetime = Date.now();
+  	var servertime = mytime+Math.floor(time*1000/FPS);
+  	if (servertime<truetime){
+	time++;
+	context.fillStyle = "black";//Background is black
+	context.fillRect(0, 0, canvas.width, canvas.height); //rectangle the size of the canvas.
+	arcadegrids[level].update();
+	arcadegrids[level].draw();
+
+	context.fillStyle = "white";
+	context.font='16px Courier New';
+	context.fillText("Tengo hambre de "+arcadegrids[level].hf,20,20);	
+	
+	context.fillText("Puntas "+arcadegrids[level].players[0].score,320,20);	
+
+	context.fillText("Remaining "+arcadegrids[level].checktotal(),520,20);	//+testgrid.checktotal(hungryfor)
+if(time%2==0){
+    var truetime = Date.now();
+    var servertime = mytime+Math.floor(time*1000/FPS);
+    if (time%(FPS*2)==0){console.log("True time: "+truetime+"Server time: "+servertime+" dt: "+(truetime-servertime));}
+    var lagging = truetime-(servertime+1000/FPS);
+	if (lagging>1000){
+		//console.log("Lagging too far, not correcting "+(truetime-servertime)+" ms");
+		}
+	else if (lagging>0){
+	  update();
+      //console.log("Running extra frame because server is behind "+(truetime-servertime)+" ms");
+      }
+    }
+
+  }else{
+	//console.log("Extra loop skipped because server is ahead "+(servertime-truetime)+"ms");
+	}
+}
+</script>
+</body>
+</html>
