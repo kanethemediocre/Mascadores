@@ -5,7 +5,7 @@ class Monster{
 		this.xx = 0;//Onscreen location
 		this.yy = 0;
 		this.name = pname;
-		this.c = "blue";
+		this.c = "red";
 		this.hp = 5;
 		this.munch = 0; //0 to 1, probability of munching valid tile on arrival
 		this.munchtype = 0;//0 for munches nothing, 1 for munches incorrect, 2 for munches correct, 3 for muches both

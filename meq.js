@@ -4,6 +4,10 @@ class Meq{
 		this.s = solution;
 		this.xx = 0;
 		this.yy = 0; //actual screen coordinates
+		this.v0 = 0;//These are variables that may describe the question
+		this.v1 = 0;
+		this.v2 = 0;
+		this.v3 = 0;
 		}
 	draw(){
 		//console.log("triedtodraw");
